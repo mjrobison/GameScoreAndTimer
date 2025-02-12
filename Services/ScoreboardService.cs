@@ -72,7 +72,8 @@ namespace Scoreboard.Services
             return new
             {
                 GameLevel = _gameLevel,
-                QuarterTime = _quarterTime,
+                Quarter = _quarter,
+                QuarterTime = _gameClock.FormatTimeObject(_quarterTime),
                 homeTeam = _team1,
                 awayTeam = _team2,
                 homeTeamScore = _team1Score,
@@ -150,7 +151,6 @@ namespace Scoreboard.Services
         {
             if (_team1TimeOuts > 0)
             {
-                Console.WriteLine($"Timeouts Left Home: {value}");
                 _team1TimeOuts += value;
                 _gameClock.StopClock();
                 SaveGameState();
@@ -198,7 +198,13 @@ namespace Scoreboard.Services
             SaveGameState();
             await _hubContext.Clients.All.SendAsync("UpdateAwayFouls", value);
         }
-        public async Task DecrementAwayFouls(int value) => await _hubContext.Clients.All.SendAsync("UpdateAwayFouls", -value);
+        public async Task DecrementAwayFouls(int value) 
+        {
+            _awayTeamFouls += value;
+            SaveGameState();
+            await _hubContext.Clients.All.SendAsync("UpdateAwayFouls", -value);
+        }
+
         public async Task SetPossession(string team) => await _hubContext.Clients.All.SendAsync("UpdatePossession", team);
         
         public async Task ToggleClockDisplay(object value) 
@@ -221,6 +227,21 @@ namespace Scoreboard.Services
             SaveGameState();
             await _hubContext.Clients.All.SendAsync("setHomeTeam", _team1);
         }
+        
+        public async Task SetAwayScore(int value) 
+        {
+            _team2Score = value;
+            SaveGameState();
+            await _hubContext.Clients.All.SendAsync("setAwayScore", _team2Score);
+        }
+        
+        public async Task SetHomeScore(int value)
+        {
+            _team1Score = value;
+            SaveGameState();
+            await _hubContext.Clients.All.SendAsync("setHomeScore", _team1Score);
+        }
+
 
         public async Task setGameConfig(string level)
         {

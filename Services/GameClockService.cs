@@ -84,7 +84,7 @@ namespace Scoreboard.Services
             return Math.Max(_remainingTime - (DateTime.UtcNow - _lastStartTime.Value).TotalSeconds, 0);
         }
 
-        private object FormatTimeObject(double time)
+        public object FormatTimeObject(double time)
         {
             return new
             {

@@ -34,7 +34,7 @@ namespace Scoreboard.Hubs
 
             public override async Task OnConnectedAsync()
             {
-                await Clients.Caller.SendAsync("UpdateGameState", _stopwatch.ElapsedMilliseconds / 1000.0, _quarterTime, _halfTime, _timeouts, _team1, _team2, _scoreTeam1, _scoreTeam2);
+                await Clients.Caller.SendAsync("UpdateGameState", _scoreboardService.GetCurrentState());
                 
                 // await Clients.Caller.SendAsync("UpdateShotLog", GetShotHistory());
                 await base.OnConnectedAsync();
@@ -125,6 +125,16 @@ namespace Scoreboard.Hubs
 
             }
            
+            public Task setHome(int value)
+            {
+                return _scoreboardService.SetHomeScore(value);
+            }
+            
+            public Task setAway(int value)
+            {
+                return _scoreboardService.SetAwayScore(value);
+            }                       
+
             // public async Task LoadTeams(string apiUrl)
             // {
             //     var client = _httpClientFactory.CreateClient();

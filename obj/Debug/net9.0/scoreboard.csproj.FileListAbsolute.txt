@@ -53,3 +53,4 @@
 /Users/matt/_code/scoreboard/bin/Debug/net9.0/runtimes/win-x86/native/e_sqlite3.dll
 /Users/matt/_code/scoreboard/obj/Debug/net9.0/scoreboard.csproj.AssemblyReference.cache
 /Users/matt/_code/scoreboard/obj/Debug/net9.0/scoreboard.csproj.Up2Date
+/Users/matt/_code/scoreboard/obj/Debug/net9.0/scoreboard.sourcelink.json
