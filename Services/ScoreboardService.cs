@@ -305,7 +305,6 @@ namespace Scoreboard.Services
         public async Task IncrementPeriod(int value) 
         {
             _quarter += value;
-            // TODO: RESET THE QUARTER TIME
             setGameConfig(_gameLevel);
             SaveGameState();
             await _hubContext.Clients.All.SendAsync("IncrementPeriod", value);
