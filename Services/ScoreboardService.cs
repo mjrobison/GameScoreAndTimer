@@ -85,6 +85,24 @@ namespace Scoreboard.Services
             };
         }
 
+        public object PushGameState()
+        {
+            return new
+            {
+                GameLevel = _gameLevel,
+                Quarter = _quarter,
+                QuarterTime = _gameClock.FormatTimeObject(_quarterTime),
+                homeTeam = _team1,
+                awayTeam = _team2,
+                homeTeamScore = _team1Score,
+                awayTeamScore = _team2Score,
+                homeTeamTimeouts = _team1TimeOuts,
+                awayTeamTimeouts = _team2TimeOuts,
+                homeTeamFouls = _homeTeamFouls,
+                awayTeamFouls = _awayTeamFouls
+            };
+        }
+
         private void LoadGameState()
         {
             // Load saved game state logic
@@ -207,6 +225,7 @@ namespace Scoreboard.Services
 
         public async Task SetPossession(string team) => await _hubContext.Clients.All.SendAsync("UpdatePossession", team);
         
+
         public async Task ToggleClockDisplay(object value) 
         {
             display_clock = !display_clock;
@@ -272,6 +291,7 @@ namespace Scoreboard.Services
         {
             var seconds = _gameClock.ConvertTimeObjectToSeconds(time);
             _gameClock.InitializeClock(seconds);
+            await _hubContext.Clients.All.SendAsync("UpdateGameState", _gameClock.FormatTimeObject(_gameClock.GetTime()));
         }
 
         public async Task DecrementPeriod(int value)
@@ -286,8 +306,24 @@ namespace Scoreboard.Services
         {
             _quarter += value;
             // TODO: RESET THE QUARTER TIME
-            SaveGameState() ;
+            setGameConfig(_gameLevel);
+            SaveGameState();
             await _hubContext.Clients.All.SendAsync("IncrementPeriod", value);
+            _gameClock.InitializeClock(_quarterTime);
+            await _hubContext.Clients.All.SendAsync("UpdateGameState", _gameClock.FormatTimeObject(_quarterTime));
+        }
+
+        public async Task SetFinal()
+        {
+            _team1Score = 0;
+            _team2Score = 0;
+            _homeTeamFouls = 0;
+            _awayTeamFouls = 0;
+            _team1TimeOuts = 5;
+            _team2TimeOuts = 5;
+            _quarter = 1;
+            SaveGameState();
+            await _hubContext.Clients.All.SendAsync("ResetGame", PushGameState());
         }
         
     }

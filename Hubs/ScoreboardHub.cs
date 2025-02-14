@@ -133,7 +133,18 @@ namespace Scoreboard.Hubs
             public Task setAway(int value)
             {
                 return _scoreboardService.SetAwayScore(value);
-            }                       
+            }
+
+            // public Task setHalf()
+            // {
+                // return _scoreboardService.setHalf();
+            // } 
+
+            public Task setFinal(bool value)
+            {
+                Console.WriteLine(value);
+                return _scoreboardService.SetFinal();
+            }         
 
             // public async Task LoadTeams(string apiUrl)
             // {
